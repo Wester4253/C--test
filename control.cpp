@@ -22,7 +22,14 @@ void exaltscreen() {
 static int x = 1;
 static int y = 4;
 static bool initialized = false;
-string playerchar = "O";
+string playerchar = "0";
+// p2 stuff
+static int p2_x = 2;
+static int p2_y = 8;
+static bool p2_initialized = false;
+string p2_playerchar = "X";
+
+
 void setcurpos(int targetX, int targetY) {
 	std::cout << "\033[" << targetY << ";" << targetX << "H" << std::flush;
 }
@@ -33,10 +40,22 @@ void initsprite() {
 		initialized = true;
 	}
 }
+void p2_initsprite() {
+	if (!p2_initialized) {
+		setcurpos(p2_x, p2_y);
+		std::cout << p2_playerchar << std::flush;
+		p2_initialized = true;
+	}
+}
+
 void showcurpos() {
 	setcurpos(1, 2);
 	std::cout << "\033[2K";
-	std::cout << "X: " << x << ",Y: " << y << std::flush;
+	std::cout << "Player 1 X: " << x << ",Player 1 Y: " << y << std::flush;
+// show p2 pos as well
+	setcurpos(1, 3);
+	std::cout << "\033[2K";
+	std::cout << "Player 2 X: " << p2_x << ", Player 2 Y: " << p2_y << std::flush;
 	setcurpos(x, y);
 }
 
@@ -98,7 +117,53 @@ void mvrht() {
 	showcurpos();
 	topmsg();
 }
-
+// P2 mv functions
+void p2_mvup() {
+	p2_initsprite();
+	setcurpos(p2_x, p2_y);
+	std::cout << " " << std::flush;
+	if (p2_y > 4) {
+		p2_y--;
+	}
+	setcurpos(p2_x, p2_y);
+	std::cout << p2_playerchar << std::flush;
+	showcurpos();
+	topmsg();
+}
+void p2_mvlft() {
+	p2_initsprite();
+	setcurpos(p2_x, p2_y);
+	std::cout << " " << std::flush;
+	if (p2_x > 1) {
+		p2_x--;
+	}
+	setcurpos(p2_x, p2_y);
+	std::cout << p2_playerchar << std::flush;
+	showcurpos();
+	topmsg();
+}
+void p2_mvdwn() {
+	p2_initsprite();
+	setcurpos(p2_x, p2_y);
+	std::cout << " " << std::flush;
+	if (p2_y < 80) {
+		p2_y++;
+	}
+	setcurpos(p2_x, p2_y);
+	std::cout << p2_playerchar << std::flush;
+	showcurpos();
+	topmsg();
+}
+void p2_mvrht() {
+	p2_initsprite();
+	setcurpos(p2_x, p2_y);
+	std::cout << " " << std::flush;
+	p2_x++;
+	setcurpos(p2_x, p2_y);
+	std::cout << p2_playerchar << std::flush;
+	showcurpos();
+	topmsg();
+}
 struct termios orig_termios;
 
 void init_term() {
@@ -158,6 +223,7 @@ int main() {
 	enaltscreen();
 	topmsg();
 	initsprite();
+	p2_initsprite();
 	function<char()> getch = getch_linux_patched;
 	showcurpos();	
 	char ctlvar;
@@ -173,7 +239,15 @@ int main() {
 			mvdwn();
 		} else if (ctlvar == 'd'){
 			mvrht();
-		} else if (ctlvar == 'e' || ctlvar == 'q') {
+		} else if (ctlvar == '8'){
+			p2_mvup();
+		} else if (ctlvar == '4'){
+			p2_mvlft();
+		} else if (ctlvar == '2'){
+			p2_mvdwn();
+		} else if (ctlvar == '6'){
+			p2_mvrht();
+		}else if (ctlvar == 'e' || ctlvar == 'q') {
 			break;
 		}
 	}
