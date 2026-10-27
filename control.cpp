@@ -24,10 +24,10 @@ static int y = 4;
 static bool initialized = false;
 string playerchar = "0";
 // p2 stuff
-static int p2_x = 2;
-static int p2_y = 8;
+static int p2_x = 1;
+static int p2_y = 5;
 static bool p2_initialized = false;
-string p2_playerchar = "X";
+string p2_playerchar = "1";
 
 
 void setcurpos(int targetX, int targetY) {
@@ -51,11 +51,11 @@ void p2_initsprite() {
 void showcurpos() {
 	setcurpos(1, 2);
 	std::cout << "\033[2K";
-	std::cout << "Player 1 X: " << x << ",Player 1 Y: " << y << std::flush;
+	std::cout << "Player 1:  X: " << x << ",  Y: " << y << std::flush;
 // show p2 pos as well
 	setcurpos(1, 3);
 	std::cout << "\033[2K";
-	std::cout << "Player 2 X: " << p2_x << ", Player 2 Y: " << p2_y << std::flush;
+	std::cout << "Player 2:  X: " << p2_x << ",  Y: " << p2_y << std::flush;
 	setcurpos(x, y);
 }
 
@@ -254,5 +254,6 @@ int main() {
 	std::cout << std::flush;
 	reset_term();
 	exaltscreen();
+	std::cout << "Thanks for playing!!" << std::flush;
 	std::exit(0);
 }
