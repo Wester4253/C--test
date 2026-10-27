@@ -173,14 +173,12 @@ int main() {
 			mvdwn();
 		} else if (ctlvar == 'd'){
 			mvrht();
-		} else if (ctlvar == 'e'){
-			reset_term();
-			exaltscreen();
-		} else if (ctlvar == 'q'){
-			reset_term();
-			exaltscreen();
+		} else if (ctlvar == 'e' || ctlvar == 'q') {
+			break;
 		}
 	}
+	std::cout << std::flush;
 	reset_term();
-	return 0;
+	exaltscreen();
+	std::exit(0);
 }
