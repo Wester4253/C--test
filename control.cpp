@@ -122,6 +122,14 @@ char getch_linux() {
 	return buf;	
 }
 
+void devshowinput() {
+	char ctlvar;
+	ctlvar = getch_linux();
+	setcurpos(1, 3);
+
+	std::cout << ctlvar << std::flush;
+	setcurpos(x, y);
+}
 
 int main() {
 	enaltscreen();
@@ -129,7 +137,8 @@ int main() {
 	initsprite();
 	showcurpos();	
 	char ctlvar;
-
+	devshowinput();
+	
 	while(true) {
 		ctlvar = getch_linux();
 		if (ctlvar == 'w') {
@@ -142,8 +151,10 @@ int main() {
 			mvrht();
 		} else if (ctlvar == 'e'){
 			exaltscreen();
-			return 0;
+		} else if (ctlvar == 'q'){
+			exaltscreen();
 		}
+			return 0;
 	}
 
 	return 0;
