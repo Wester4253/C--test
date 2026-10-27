@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <string>
+#include <functional>
 using namespace std;
 
 // functions to clear screen and restore screen
@@ -16,8 +17,6 @@ void exaltscreen() {
 	std::cout << "\033[?1049l";
 	std::cout.flush();
 }
-
-
 
 // define stuff for moving stuff
 static int x = 1;
@@ -100,47 +99,72 @@ void mvrht() {
 	topmsg();
 }
 
-char getch_linux() {
+struct termios orig_termios;
+
+void init_term() {
+	struct termios raw;
+	tcgetattr(STDIN_FILENO, &orig_termios);
+	raw = orig_termios;
+	raw.c_lflag &= ~(ICANON | ECHO);
+	raw.c_cc[VMIN] = 1;
+	raw.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &raw);
+}
+void reset_term() {
+	tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
+}
+char getch_linux_patched() {
 	char buf = 0;
-	struct termios old = {0};
-
-	if (tcgetattr(0, &old) < 0) perror("tcgetattr()");
-
-	old.c_lflag &= ~ICANON;
-	old.c_lflag &= ~ECHO;
-	old.c_cc[VMIN] = 1;
-	old.c_cc[VTIME] = 0;
-
-	if(tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ~ICANON");
-
-	if(read(0, &buf, 1) < 0) perror("read()");
-
-	old.c_lflag |= ICANON;
-	old.c_lflag |= ECHO;
-	if(tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ICANON");
-
-	return buf;	
+	if (read(STDIN_FILENO, &buf, 1) < 0) {
+		perror("read()");
+	}
+	return buf;
 }
 
-void devshowinput() {
-	char ctlvar;
-	ctlvar = getch_linux();
-	setcurpos(1, 3);
+// OLD CODE - NOT USED
+// char getch_linux() {
+//	char buf = 0;
+//	struct termios old = {0};
+//
+//	if (tcgetattr(0, &old) < 0) perror("tcgetattr()");
+//
+//	old.c_lflag &= ~ICANON;
+//	old.c_lflag &= ~ECHO;
+//	old.c_cc[VMIN] = 1;
+//	old.c_cc[VTIME] = 0;
+//
+//	if(tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ~ICANON");
+//
+//	if(read(0, &buf, 1) < 0) perror("read()");
+//
+//	old.c_lflag |= ICANON;
+//	old.c_lflag |= ECHO;
+//	if(tcsetattr(0, TCSADRAIN, &old) < 0) perror("tcsetattr ICANON");
+//
+//	return buf;	
+//}
 
+void devshowinput() {
+	std::function<char()> getch = getch_linux_patched;
+	char ctlvar;
+	ctlvar = getch();
+	setcurpos(1, 3);
 	std::cout << ctlvar << std::flush;
 	setcurpos(x, y);
 }
 
 int main() {
+	init_term();
 	enaltscreen();
 	topmsg();
 	initsprite();
+	function<char()> getch = getch_linux_patched;
 	showcurpos();	
 	char ctlvar;
-	devshowinput();
+//	devshowinput();
 	
 	while(true) {
-		ctlvar = getch_linux();
+		ctlvar = getch();
 		if (ctlvar == 'w') {
 			mvup();
 		} else if (ctlvar == 'a') {
@@ -150,12 +174,13 @@ int main() {
 		} else if (ctlvar == 'd'){
 			mvrht();
 		} else if (ctlvar == 'e'){
+			reset_term();
 			exaltscreen();
 		} else if (ctlvar == 'q'){
+			reset_term();
 			exaltscreen();
 		}
-			return 0;
 	}
-
+	reset_term();
 	return 0;
 }
