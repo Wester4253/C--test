@@ -61,7 +61,24 @@ void drawBoard(const Grid &grid) {
     }
 }
 
+void paintCell(Grid &grid, int x, int y, bool alive) {
+    if (x < 0 || x >= cols || y < 0 || y >= rows) {
+        return;
+    }
+    grid[index(x, y)] = alive ? 1 : 0;
+}
 
+void handleMouse(Grid &grid) {
+    bool left = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+    bool right = IsMouseButtonDown(MOUSE_BUTTON_RIGHT);
+    if (!left && !right) {
+        return;
+    }
+    Vector2 mouse = GetMousePosition();
+    int x = static_cast<int>(mouse.x) / cell_size;
+    int y = static_cast<int>(mouse.y) / cell_size;
+    paintCell(grid, x, y, left);
+}
 
 int main() {
     InitWindow(width, height, title);
@@ -73,14 +90,7 @@ int main() {
     constexpr float step_delay = 0.1f;
 
     while (!WindowShouldClose()) {
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-            Vector2 mouse = GetMousePosition();
-            int x = static_cast<int>(mouse.x) / cell_size;
-            int y = static_cast<int>(mouse.y) / cell_size;
-            if (x >= 0 && x < cols && y >= 0 && y < rows) {
-                grid[index(x, y)] = IsMouseButtonDown(MOUSE_BUTTON_LEFT) ? 1 : 0;
-            }
-        }
+        handleMouse(grid);
         
         if (IsKeyPressed(KEY_SPACE)) {
             running = !running;
