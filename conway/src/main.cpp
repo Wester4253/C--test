@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <utility>
 
+#define MOUSE_LEFT_BUTTON  MOUSE_BUTTON_LEFT
+
 // Variables
 constexpr int width = 500;
 constexpr int height = 500;
