@@ -44,6 +44,25 @@ void step(const Grid &cells, Grid &next) {
         }
     }
 }
+
+void drawBoard(const Grid &grid) {
+    for (int y = 0; y < rows; ++y) {
+        for (int x = 0; x < cols; ++x){
+            if (grid[index(x, y)] == 1) {
+                DrawRectangle(x * cell_size, y * cell_size, cell_size, cell_size, RAYWHITE);
+            }
+        }
+    }
+    for (int x = 0; x <= cols; ++x) {
+        DrawLine(x * cell_size, 0, x * cell_size, height, Fade(DARKGRAY, 0.4f));
+    }
+    for (int y = 0; y <= rows; ++y) {
+        DrawLine(0, y * cell_size, width, y * cell_size, Fade(DARKGRAY, 0.4f));
+    }
+}
+
+
+
 int main() {
     InitWindow(width, height, title);
     SetTargetFPS(60);
@@ -85,20 +104,7 @@ int main() {
 
         BeginDrawing();
         ClearBackground(BLACK);
-        for (int y = 0; y < rows; ++y) {
-            for (int x = 0; x < cols; ++x)
-                if (grid[index(x, y)] == 1) {
-                    DrawRectangle(x * cell_size, y * cell_size, 
-                    cell_size, cell_size, RAYWHITE);
-                }
-        }
-        for (int x = 0; x <= cols; ++x) {
-            DrawLine(x * cell_size, 0, x * cell_size, height, Fade(DARKGRAY, 0.4f));
-        }
-        for (int y = 0; y <= rows; ++y) {
-            DrawLine(0, y * cell_size, width, y * cell_size, Fade(DARKGRAY, 0.4f));
-        }
-        
+        drawBoard(grid);
         EndDrawing();
     }
     CloseWindow();
