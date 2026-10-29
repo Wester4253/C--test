@@ -1,3 +1,0 @@
-/home/wstr/documents/code/c++/conway/build/CMakeFiles/conway.dir
-/home/wstr/documents/code/c++/conway/build/CMakeFiles/edit_cache.dir
-/home/wstr/documents/code/c++/conway/build/CMakeFiles/rebuild_cache.dir
